@@ -7,6 +7,7 @@ argparse = require 'argparse'
 temp = require 'temp'
 fs = require 'fs.extra'
 clone = require 'clone'
+semver = require 'semver'
 
 bowerJson = require 'bower-json'
 endpointParser = require 'bower-endpoint-parser'
@@ -70,6 +71,8 @@ bowerJson.read args.bowerJson, normalize: true, (err, json) ->
               if buf?
                 nixHash.stdout.removeListener 'readable', readHash
                 nixHash.removeListener 'close', earlyClose
+                if semver.validRange value, true and info.version?
+                  value = info.version
                 output.write "  (fetchBower \"#{key}\" \"#{value}\" \"#{buf.toString()}\")\n"
                 fs.rmrf tmpdir, ->
             nixHash.stdout.on 'readable', readHash

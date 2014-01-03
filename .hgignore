@@ -1,2 +1,2 @@
-(?<!command)\.js
+(?<!command)\.js$
 node_modules
