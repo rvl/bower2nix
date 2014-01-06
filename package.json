@@ -1,7 +1,7 @@
 {
   "name": "bower2nix"
 
-, "version": "1.0.1"
+, "version": "2.0.0"
 
 , "description": "Generate nix expressions to fetch bower dependencies"
 
@@ -24,6 +24,7 @@
   , "argparse": "0.1.15"
   , "clone": "0.1.11"
   , "semver": ">=2.2.1 <3"
+  , "fetch-bower": ">=2 <3"
   }
 
 , "devDependencies": {
