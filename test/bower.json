@@ -1,0 +1,15 @@
+{
+  "name": "bower-test",
+  "dependencies": {
+    "angular": "~1.4.0",
+    "angular-animate": "~1.4.0",
+    "angular-cookies": "~1.4.0",
+    "angular-touch": "~1.4.0",
+    "angular-sanitize": "~1.4.0",
+    "angular-ui-router": "~0.2.15",
+    "bootstrap": "~3.3.4",
+    "angular-bootstrap": "~0.11.2",
+    "moment": "~2.10.3",
+    "lodash": "~3.9.3"
+  }
+}
