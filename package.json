@@ -1,47 +1,46 @@
 {
-  "name": "bower2nix"
-
-, "version": "2.1.0"
-
-, "description": "Generate nix expressions to fetch bower dependencies"
-
-, "homepage": "https://bitbucket.org/shlevy/bower2nix"
-
-, "author": {
-    "name": "Shea Levy"
-  , "email": "shea@shealevy.com"
-  }
-
-, "bin": { "bower2nix": "lib/command.js" }
-
-, "dependencies": {
-    "temp": "0.6.0"
-  , "fs.extra": ">=1.2.1 <2"
-  , "bower-json": "0.4.0"
-  , "bower-endpoint-parser": "0.2.1"
-  , "bower-logger": "0.2.1"
-  , "bower": ">=1.2.8 <2"
-  , "argparse": "0.1.15"
-  , "clone": "0.1.11"
-  , "semver": ">=2.2.1 <3"
-  , "fetch-bower": ">=2 <3"
-  }
-
-, "devDependencies": {
-    "coffee-script": ">=1.6.3 <2.0.0"
-  }
-
-, "repository": {
-    "type": "hg"
-  , "url": "https://bitbucket.org/shlevy/bower2nix"
-  }
-
-, "licenses": [ {
-    "type": "MIT"
-  , "url": "https://bitbucket.org/shlevy/bower2nix/raw/default/LICENSE"
-  } ]
-
-, "scripts": {
-    "prepublish": "coffee --bare --compile --output lib src/*.coffee"
+  "name": "bower2nix",
+  "version": "3.0.0",
+  "description": "Generate nix expressions to fetch bower dependencies",
+  "homepage": "https://github.com/rvl/bower2nix",
+  "contributors": [{
+    "name": "Shea Levy",
+    "email": "shea@shealevy.com"
+  }, {
+    "name": "Rodney Lorrimar",
+    "email": "dev@rodney.id.au"
+  }],
+  "bin": {
+    "bower2nix": "bin/bower2nix",
+    "fetch-bower": "bin/fetch-bower"
+  },
+  "dependencies": {
+    "argparse": "1.0.4",
+    "bower": ">=1.2.8 <2",
+    "bower-endpoint-parser": "0.2.1",
+    "bower-json": "0.6.0",
+    "bower-logger": "0.2.1",
+    "fs-extra": "~0.26.5",
+    "lodash": "~4.2.1",
+    "promised-temp": "^0.1.0",
+    "semver": ">=5.1.0 <6",
+    "temp": "0.8.3",
+    "glob": "6.0.4"
+  },
+  "devDependencies": {
+    "typescript": "~1.7.5",
+    "tsd": "~0.6.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rvl/bower2nix"
+  },
+  "license": "GPL-3.0",
+  "scripts": {
+    "postinstall": "echo tsd install",
+    "prepublish": "tsc"
+  },
+  "typescript": {
+    "definition": "dist/bower2nix.d.ts"
   }
 }
