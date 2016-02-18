@@ -368,10 +368,7 @@ async function fetchBower(outDir: string, name: string, target?: string, version
   }
 
   return <any>new Promise((resolve, reject) => {
-    let endpoint = endpointParser.json2decomposed(name);
-    if (version || target) {
-      endpoint.target = version || target;
-    }
+    let endpoint = endpointParser.json2decomposed(name, version || target);
     repo.fetch(endpoint)
       .spread(async (path: string, info: BowerInfo) => {
         patchTarget(info);
