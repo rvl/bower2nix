@@ -426,6 +426,11 @@ function parseFetchBowerArgs() {
     metavar: 'DIR'
   });
 
+  parser.addArgument([ '--quiet', '-q' ], {
+    help: "Don't print package json",
+    action: "storeTrue"
+  });
+
   parser.addArgument([ 'name' ], {
     help: 'Package name',
     type: 'string',
@@ -460,5 +465,7 @@ export async function fetchBowerMain() {
   process.env.HOME = tmpdir;
 
   let info = await fetchBower(out, args.name, args.target, args.version);
-  process.stdout.write(JSON.stringify(info));
+  if (!args.quiet) {
+    process.stdout.write(JSON.stringify(info));
+  }
 }
