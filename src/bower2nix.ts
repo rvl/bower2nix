@@ -287,7 +287,7 @@ function writeLine(output: NodeJS.WritableStream, dep: FetchBower) {
 }
 
 function writeErrorLine(output: NodeJS.WritableStream, err: FetchError) {
-  output.write(`  // failed to fetch \"${err.name}\": ${err.msg}\n`);
+  output.write(`  # failed to fetch \"${err.name}\": ${err.msg}\n`);
 }
 
 function writeFooter(output: NodeJS.WritableStream) {
