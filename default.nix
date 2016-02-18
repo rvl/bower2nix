@@ -27,4 +27,5 @@ nodePackages.buildNodePackage rec {
   allDeps = getDrvs nodePackages;
   postBuild = "tsc";
   postInstall = "mv dist $out/lib/node_modules/bower2nix/dist";
+  propagatedBuildInputs = [ pkgs.git ];
 }
