@@ -1,15 +1,18 @@
 {
   "name": "bower2nix",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Generate nix expressions to fetch bower dependencies",
   "homepage": "https://github.com/rvl/bower2nix",
-  "contributors": [{
-    "name": "Shea Levy",
-    "email": "shea@shealevy.com"
-  }, {
-    "name": "Rodney Lorrimar",
-    "email": "dev@rodney.id.au"
-  }],
+  "contributors": [
+    {
+      "name": "Shea Levy",
+      "email": "shea@shealevy.com"
+    },
+    {
+      "name": "Rodney Lorrimar",
+      "email": "dev@rodney.id.au"
+    }
+  ],
   "bin": {
     "bower2nix": "bin/bower2nix",
     "fetch-bower": "bin/fetch-bower"
