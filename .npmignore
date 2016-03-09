@@ -1,3 +1,4 @@
 .gitignore
 *.nix
 *.tgz
+test
