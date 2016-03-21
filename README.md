@@ -59,7 +59,7 @@ downloaded bower packages.
   bowerComponents = pkgs.stdenv.mkDerivation {
     name = "bower_components";
     inherit bowerPackages;
-    src = nodePackage;
+    src = mySources;
     buildPhase = ''
       cp -RL --reflink=auto ${bowerPackages} bc
       chmod -R u+w bc
@@ -104,6 +104,11 @@ Optional arguments:
   -v, --version      Show program's version number and exit.
   --out DIR, -o DIR  Output directory
 ```
+
+## Requirements
+
+`bower2nix` requires an ES6 interpreter to run. Practically, this
+means running NixOS 16.03 or higher because it includes Node.js 4.x.
 
 ## Authors
 
