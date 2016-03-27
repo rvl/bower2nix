@@ -31,7 +31,7 @@
     "glob": "6.0.4"
   },
   "devDependencies": {
-    "typescript": "~1.7.5",
+    "typescript": "~1.8.9",
     "tsd": "~0.6.5"
   },
   "repository": {
