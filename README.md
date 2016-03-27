@@ -80,7 +80,7 @@ downloaded bower packages.
 The resulting derivation is a `bower_components` directory which is
 ready to use in your project's build process.
 
-There is a small example within the `test` subdirectory of this repo.
+There is a small example within the `example` subdirectory of this repo.
 
 ## Fetch Bower
 

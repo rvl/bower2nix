@@ -1,0 +1,8 @@
+{
+  "name": "my-web-app",
+  "version": "0.1.0",
+  "dependencies": {
+    "angular": "~1.5.0",
+    "bootstrap": "~3.3.6"
+  }
+}
