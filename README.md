@@ -52,35 +52,21 @@ generated with `bower install` by pointing it at the environment of
 downloaded bower packages.
 
 ```nix
-  bowerPackages = import ./bower-generated.nix {
-    inherit (pkgs) fetchbower buildEnv;
-  };
-
   bowerComponents = pkgs.stdenv.mkDerivation {
-    name = "bower_components";
-    inherit bowerPackages;
+    name = "bower-test";
+    generated = ./bower-generated.nix;
     src = mySources;
-    buildPhase = ''
-      cp -RL --reflink=auto ${bowerPackages} bc
-      chmod -R u+w bc
-      HOME=$PWD bower \
-          --config.storage.packages=bc/packages \
-          --config.storage.registry=bc/registry \
-          --offline install
-    '';
-    installPhase = "mv bower_components $out";
-    buildInputs = [
-      pkgs.git
-      bowerPackages
-      pkgs.nodePackages.bower
-    ];
   };
 ```
 
-The resulting derivation is a `bower_components` directory which is
-ready to use in your project's build process.
+The resulting derivation contains a `bower_components` directory which
+is ready to use in your project's build process.
 
 There is a small example within the `example` subdirectory of this repo.
+
+For more information, see the [Nixpkgs manual][1] (unstable version).
+
+[1]: https://nixos.org/channels/nixpkgs-unstable/manual/#sec-bower
 
 ## Fetch Bower
 
