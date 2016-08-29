@@ -106,6 +106,7 @@ function fetchSuccess(dep: DepResult): dep is FetchBower {
  */
 async function handleDep(key: string, value: string): Promise<DepResult> {
   //console.log(`handleDep(${key}, ${value})`);
+  let endpointParser = require('bower-endpoint-parser');
   let tmpdir: string;
   let info: BowerInfo;
   let hash: string;
@@ -130,7 +131,17 @@ async function handleDep(key: string, value: string): Promise<DepResult> {
     fsx.remove(tmpdir, () => {});
   }
 
-  let version = (semver.validRange(value, true) && info.version) ? info.version : value;
+  // "value" can contain a source specification as well. For this case keep the
+  // source also for the resolved version, so that fetch-bower can still find
+  // it.
+  let rangeValue = value;
+  let versionWithSource = info.version;
+  if (containsSource(value)) {
+    let endpoint = endpointParser.decompose(value);
+    rangeValue = endpoint.target;
+    versionWithSource = endpoint.source + "#" + info.version;
+  }
+  let version = (semver.validRange(rangeValue, true) && info.version) ? versionWithSource : value;
 
   return {
     success: true,
@@ -140,6 +151,10 @@ async function handleDep(key: string, value: string): Promise<DepResult> {
     hash: hash,
     moreDeps: info.dependencies
   };
+}
+
+function containsSource(value: string) {
+  return value && value.indexOf("#") >= 0;
 }
 
 function spawnFetchBower2(path: string, name: string, version: string): Promise<BowerInfo> {
