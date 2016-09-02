@@ -9,6 +9,8 @@ let
     neededNatives = [ pkgs.python ] ++ pkgs.lib.optional pkgs.stdenv.isLinux pkgs.utillinux;
     self = nodePackages;
     generated = ./node-packages.nix;
+    # Prevent magic overrides from getting applied.
+    overrides = { bower2nix = {}; };
   };
   getDrvs = with pkgs.stdenv.lib; pkgs: (filter (v: nixType v == "derivation") (attrValues pkgs));
   tarball = pkgs.runCommand "bower2nix-${version}.tgz" { buildInputs = [ pkgs.nodejs ]; } ''
