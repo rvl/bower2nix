@@ -2,7 +2,7 @@
 , pkgs ? import <nixpkgs> {}
 }:
 let
-  version = "3.0.1";
+  version = "3.1.1";
   nodePackages = import "${pkgs.path}/pkgs/top-level/node-packages.nix" {
     inherit pkgs;
     inherit (pkgs) stdenv nodejs fetchurl fetchgit;
