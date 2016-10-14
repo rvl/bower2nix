@@ -88,11 +88,15 @@ interface FetchBower extends FetchResult {
   moreDeps: Dependencies;
 }
 
+interface FetchRelative extends FetchResult {
+  includeDeps: string;
+}
+
 interface FetchError extends FetchResult {
   msg: string;
 }
 
-type DepResult = FetchError | FetchBower;
+type DepResult = FetchError | FetchBower | FetchRelative;
 
 /**
  * User-defined type guard for DepResult.
@@ -101,15 +105,33 @@ function fetchSuccess(dep: DepResult): dep is FetchBower {
   return dep.success;
 }
 
+function isFetchRelative(dep: any): dep is FetchRelative {
+  return !!dep.includeDeps;
+}
+
+function isRelativePath(value: string): boolean {
+  return !!value.match(/^\.\.?\//);
+}
+
 /**
  * Gets the version info for a dep.
  */
 async function handleDep(key: string, value: string): Promise<DepResult> {
-  //console.log(`handleDep(${key}, ${value})`);
   let endpointParser = require('bower-endpoint-parser');
   let tmpdir: string;
   let info: BowerInfo;
   let hash: string;
+
+  //console.log(`handleDep(${key}, ${value})`);
+
+  if (isRelativePath(value)) {
+    return {
+      success: false,
+      name: key,
+      target: value,
+      includeDeps: value
+    };
+  }
 
   try {
     tmpdir = await temp.mkdir({ dir: os.tmpdir(), prefix: "bower2nix" });
@@ -137,7 +159,7 @@ async function handleDep(key: string, value: string): Promise<DepResult> {
   let rangeValue = value;
   let versionWithSource = info.version;
   if (containsSource(value)) {
-    let endpoint = endpointParser.decompose(value);
+    let endpoint: any = _.assign(endpointParser.decompose(value), { name: key });
     rangeValue = endpoint.target;
     versionWithSource = endpoint.source + "#" + info.version;
   }
@@ -259,22 +281,27 @@ function readBower(filename: string): Promise<BowerInfo> {
   });
 }
 
+async function parseBowerJsonDeps(filename: string): Promise<Dependencies> {
+  let json = await readBower(filename);
+  return _.merge(<any>{}, json.dependencies,
+                 json.devDependencies, json.resolutions);
+}
+
 async function parseBowerJson(filename: string): Promise<DepResult[]> {
+  let result: DepResult[] = [];
+  var deps: Dependencies;
   try {
-    var json = await readBower(filename);
+    deps = await parseBowerJsonDeps(filename);
   } catch (err) {
     error(`Parsing ${filename} failed: ${err}`);
   }
-
-  let result: DepResult[] = [];
-  let deps = _.merge(<any>{}, json.dependencies,
-                     json.devDependencies, json.resolutions);
   let queue = _.keys(deps);
 
   while (queue.length > 0) {
     let name = queue.shift();
     let version = deps[name];
     let dep = await handleDep(name, version);
+    var add = true;
 
     if (fetchSuccess(dep)) {
       _.each(dep.moreDeps, (version: string, name: string) => {
@@ -283,12 +310,28 @@ async function parseBowerJson(filename: string): Promise<DepResult[]> {
           queue.push(name);
         }
       });
+    } else if (isFetchRelative(dep)) {
+      // include deps from a nearby bower.json
+      try {
+        let more = await parseBowerJsonDeps(relativeBowerJson(filename, dep.includeDeps));
+        _(more).keys().each(key => queue.push(key));
+        deps = <Dependencies>_.assign({}, more, deps);
+        add = false;
+      } catch (err) {
+        // the error will be reported in output file
+      }
     }
 
-    result.push(dep);
+    if (add) {
+      result.push(dep);
+    }
   }
 
   return result;
+}
+
+function relativeBowerJson(original: string, relative: string):string  {
+  return path.join(path.dirname(original), relative, "bower.json");
 }
 
 function writeHeader(output: NodeJS.WritableStream) {
@@ -306,6 +349,10 @@ function writeErrorLine(output: NodeJS.WritableStream, err: FetchError) {
   output.write(`  # failed to fetch \"${err.name}\": ${err.msg}\n`);
 }
 
+function writeRelativeErrorLine(output: NodeJS.WritableStream, err: FetchRelative) {
+  output.write(`  # failed to load relative dep \"${err.includeDeps}\"\n`);
+}
+
 function writeFooter(output: NodeJS.WritableStream) {
   output.write("]; }\n");
 }
@@ -321,6 +368,8 @@ export async function bower2nixMain() {
   for (let dep of await parseBowerJson(args.bowerJson)) {
     if (fetchSuccess(dep)) {
       writeLine(output, dep);
+    } else if (isFetchRelative(dep)) {
+      writeRelativeErrorLine(output, dep);
     } else {
       writeErrorLine(output, dep);
     }
