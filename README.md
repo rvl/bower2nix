@@ -18,6 +18,13 @@ Optional arguments:
   -v, --version  Show program's version number and exit.
 ```
 
+## Installing
+
+The easiest way to install `bower2nix` is not to install it at
+all. Just start a `nix-shell`:
+
+    nix-shell -p nodePackages.bower2nix
+
 ## Example
 
 If you have a `bower.json` file like this:
@@ -52,7 +59,7 @@ generated with `bower install` by pointing it at the environment of
 downloaded bower packages.
 
 ```nix
-  bowerComponents = pkgs.stdenv.mkDerivation {
+  bowerComponents = pkgs.buildBowerComponents {
     name = "bower-test";
     generated = ./bower-generated.nix;
     src = mySources;
@@ -64,9 +71,9 @@ is ready to use in your project's build process.
 
 There is a small example within the `example` subdirectory of this repo.
 
-For more information, see the [Nixpkgs manual][1] (unstable version).
+For more information, see the [Nixpkgs manual][1].
 
-[1]: https://nixos.org/channels/nixpkgs-unstable/manual/#sec-bower
+[1]: http://nixos.org/nixpkgs/manual/#sec-bower
 
 ## Fetch Bower
 
@@ -93,8 +100,8 @@ Optional arguments:
 
 ## Requirements
 
-`bower2nix` requires an ES6 interpreter to run. Practically, this
-means running NixOS 16.03 or higher because it includes Node.js 4.x.
+`bower2nix` requires Node.js 4.x or higher. The latest version of
+`bower2nix` is in the 16.09 release of nixpkgs/NixOS, so use that.
 
 ## Authors
 
