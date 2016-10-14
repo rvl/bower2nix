@@ -309,7 +309,6 @@ async function parseBowerJson(filename: string): Promise<DepResult[]> {
     let name = queue.shift();
     let version = deps[name];
     let dep = await handleDep(name, version);
-    var add = true;
 
     if (fetchSuccess(dep)) {
       _.each(dep.moreDeps, (version: string, name: string) => {
@@ -318,19 +317,25 @@ async function parseBowerJson(filename: string): Promise<DepResult[]> {
           queue.push(name);
         }
       });
+      result.push(dep);
     } else if (isFetchRelative(dep)) {
       // include deps from a nearby bower.json
       try {
         let more = await parseBowerJsonDeps(relativeBowerJson(filename, dep.includeDeps));
         _(more).keys().each(key => queue.push(key));
         deps = <Dependencies>_.assign({}, more, deps);
-        add = false;
+        result.push({
+          success: true,
+          name: dep.name,
+          target: dep.target,
+          version: dep.target,
+          hash: "0000000000000000000000000000000000000000000000000000",
+          moreDeps: {}
+        });
       } catch (err) {
         // the error will be reported in output file
       }
-    }
-
-    if (add) {
+    } else {
       result.push(dep);
     }
   }
