@@ -109,10 +109,6 @@ function isFetchRelative(dep: any): dep is FetchRelative {
   return !!dep.includeDeps;
 }
 
-function isRelativePath(value: string): boolean {
-  return !!value.match(/^\.\.?\//);
-}
-
 /**
  * Gets the version info for a dep.
  */
@@ -153,16 +149,18 @@ async function handleDep(key: string, value: string): Promise<DepResult> {
     fsx.remove(tmpdir, () => {});
   }
 
-  // "value" can contain a source specification as well. For this case keep the
-  // source also for the resolved version, so that fetch-bower can still find
-  // it.
+  let endpoint: any = _.assign(endpointParser.decompose(value), { name: key });
   let rangeValue = value;
   let versionWithSource = info.version;
-  if (containsSource(value)) {
-    let endpoint: any = _.assign(endpointParser.decompose(value), { name: key });
+
+  if (containsSource(value) || isGitRepo(value)) {
+    // "value" can contain a source specification as well. For this case keep the
+    // source also for the resolved version, so that fetch-bower can still find
+    // it.
     rangeValue = endpoint.target;
     versionWithSource = endpoint.source + "#" + info.version;
   }
+
   let version = (semver.validRange(rangeValue, true) && info.version) ? versionWithSource : value;
 
   return {
@@ -175,8 +173,18 @@ async function handleDep(key: string, value: string): Promise<DepResult> {
   };
 }
 
+function isRelativePath(value: string): boolean {
+  return !!value.match(/^\.\.?\//);
+}
+
 function containsSource(value: string) {
   return value && value.indexOf("#") >= 0;
+}
+
+function isGitRepo(value: string) {
+  return value &&
+    (value.indexOf("git://") === 0 ||
+     (value.match(/\//g) || []).length === 1);
 }
 
 function spawnFetchBower2(path: string, name: string, version: string): Promise<BowerInfo> {
