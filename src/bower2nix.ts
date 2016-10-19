@@ -67,7 +67,12 @@ function error(message: string) {
 
 interface Dependencies {
   [index: string]: string;
-};
+}
+
+interface Dependency {
+  name: string;
+  spec: string;
+}
 
 interface BowerInfo {
   version: string;
@@ -85,7 +90,7 @@ interface FetchResult {
 interface FetchBower extends FetchResult {
   version: string;
   hash: string;
-  moreDeps: Dependencies;
+  moreDeps: Dependency[];
 }
 
 interface FetchRelative extends FetchResult {
@@ -169,7 +174,7 @@ async function handleDep(key: string, value: string): Promise<DepResult> {
     version: version,
     target: value,
     hash: hash,
-    moreDeps: info.dependencies
+    moreDeps: makeDeps(info.dependencies)
   };
 }
 
@@ -289,54 +294,75 @@ function readBower(filename: string): Promise<BowerInfo> {
   });
 }
 
-async function parseBowerJsonDeps(filename: string): Promise<Dependencies> {
-  let json = await readBower(filename);
-  return _.merge(<any>{}, json.dependencies,
-                 json.devDependencies, json.resolutions);
+function makeDeps(deps: Dependencies): Dependency[] {
+  return _.map(deps, (spec: string, name: string) => {
+    return { name, spec };
+  });
 }
 
-async function parseBowerJson(filename: string): Promise<DepResult[]> {
+async function parseBowerJsonDeps(filename: string): Promise<Dependency[]> {
+  let json = await readBower(filename);
+  return _.concat(makeDeps(json.dependencies),
+                  makeDeps(json.devDependencies),
+                  makeDeps(json.resolutions));
+}
+
+async function parseBowerJson(filename: string, cb?: (dep: DepResult) => void): Promise<DepResult[]> {
   let result: DepResult[] = [];
-  var deps: Dependencies;
+  var queue: Dependency[];
+  var info: BowerInfo;
   try {
-    deps = await parseBowerJsonDeps(filename);
+    queue = await parseBowerJsonDeps(filename);
   } catch (err) {
     error(`Parsing ${filename} failed: ${err}`);
   }
-  let queue = _.keys(deps);
+
+  let provide = (dep: DepResult) => {
+    result.push(dep);
+    if (cb) {
+      cb(dep);
+    }
+  };
+
+  let queueDeps = (deps: Dependency[]) => {
+    let key = (dep: Dependency) => dep.name + dep.spec;
+    let seen: { [index: string]: boolean; } = {};
+    _.each(queue, dep => {
+      seen[key(dep)] = true;
+    });
+    _.each(deps, dep => {
+      if (!seen[key(dep)]) {
+        queue.push(dep);
+        seen[key(dep)] = true;
+      }
+    });
+  };
 
   while (queue.length > 0) {
-    let name = queue.shift();
-    let version = deps[name];
-    let dep = await handleDep(name, version);
+    let head = queue.shift();
+    let dep = await handleDep(head.name, head.spec);
 
     if (fetchSuccess(dep)) {
-      _.each(dep.moreDeps, (version: string, name: string) => {
-        if (!deps[name]) {
-          deps[name] = version;
-          queue.push(name);
-        }
-      });
-      result.push(dep);
+      queueDeps(dep.moreDeps);
+      provide(dep);
     } else if (isFetchRelative(dep)) {
       // include deps from a nearby bower.json
       try {
         let more = await parseBowerJsonDeps(relativeBowerJson(filename, dep.includeDeps));
-        _(more).keys().each(key => queue.push(key));
-        deps = <Dependencies>_.assign({}, more, deps);
-        result.push({
+        queueDeps(more);
+        provide({
           success: true,
           name: dep.name,
           target: dep.target,
           version: dep.target,
           hash: "0000000000000000000000000000000000000000000000000000",
-          moreDeps: {}
+          moreDeps: []
         });
       } catch (err) {
         // the error will be reported in output file
       }
     } else {
-      result.push(dep);
+      provide(dep);
     }
   }
 
@@ -378,7 +404,7 @@ export async function bower2nixMain() {
 
   writeHeader(output);
 
-  for (let dep of await parseBowerJson(args.bowerJson)) {
+  await parseBowerJson(args.bowerJson, dep => {
     if (fetchSuccess(dep)) {
       writeLine(output, dep);
     } else if (isFetchRelative(dep)) {
@@ -386,7 +412,7 @@ export async function bower2nixMain() {
     } else {
       writeErrorLine(output, dep);
     }
-  }
+  });
 
   writeFooter(output);
 
