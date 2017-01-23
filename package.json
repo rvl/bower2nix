@@ -1,6 +1,6 @@
 {
   "name": "bower2nix",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "description": "Generate nix expressions to fetch bower dependencies",
   "homepage": "https://github.com/rvl/bower2nix",
   "contributors": [
