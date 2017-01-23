@@ -458,7 +458,7 @@ async function fetchBower(outDir: string, name: string, target?: string, version
           return patchTarget(json);
         }));
         Promise.all(_.concat(reg, pkg)).then(() => resolve(info), reject);
-      });
+      }, reject);
   });
 }
 
