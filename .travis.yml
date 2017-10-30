@@ -1,0 +1,5 @@
+language: nix
+script: ./tests/run.sh
+env:
+  - CHANNEL=nixos-17.09
+  - CHANNEL=nixos-unstable

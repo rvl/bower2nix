@@ -1,0 +1,6 @@
+{
+  "name": "nextcloud-calendar",
+  "dependencies": {
+    "jstzdetect": "https://github.com/georgehrke/jstimezonedetect.git"
+  }
+}
