@@ -2,6 +2,10 @@
 
 export NIX_PATH="nixpkgs=https://nixos.org/channels/${CHANNEL-nixos-unstable}/nixexprs.tar.xz"
 
+cd $(dirname $0)
+
+nix-shell ../default.nix -A shell --run "cd .. && tsc"
+
 bower2nix=$(nix-build --no-out-link ../default.nix -A package)
 
 PATH=$bower2nix/bin:$PATH

@@ -1,5 +1,7 @@
 # bower2nix
 
+[![Build Status](https://travis-ci.org/rvl/bower2nix.svg?branch=master)](https://travis-ci.org/rvl/bower2nix)
+
 Generate nix expressions to fetch bower dependencies.
 
 ## Usage
