@@ -5,6 +5,10 @@
   }, system ? builtins.currentSystem, nodejs ? pkgs."nodejs-4_x"}:
 
 let
+  globalBuildInputs = pkgs.lib.attrValues (import ./supplement.nix {
+    inherit nodeEnv;
+    inherit (pkgs) fetchurl fetchgit;
+  });
   nodeEnv = import ./node-env.nix {
     inherit (pkgs) stdenv python2 utillinux runCommand writeTextFile;
     inherit nodejs;
@@ -12,5 +16,5 @@ let
 in
 import ./node-packages.nix {
   inherit (pkgs) fetchurl fetchgit;
-  inherit nodeEnv;
+  inherit nodeEnv globalBuildInputs;
 }
