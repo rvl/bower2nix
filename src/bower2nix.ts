@@ -1,7 +1,5 @@
 /// <reference path="../typings/tsd.d.ts" />
 
-'use strict';
-
 import path = require('path');
 import util = require('util');
 import child_process = require('child_process');
@@ -265,7 +263,7 @@ function nixHash(path: string): Promise<string> {
       } else if (!buf) {
         reject("nix-hash exited before outputting the hash");
       } else {
-        resolve(buf.toString);
+        resolve(buf.toString());
       }
     });
     proc.once('error', (err: {}) => {
@@ -479,7 +477,7 @@ function mutateFile<T>(func: (ob: {}) => T): Mutator<T> {
         } else {
           let json = JSON.parse(data.toString());
           let json2 = func(json);
-          fs.writeFile(file, JSON.stringify(json2), (err, data) => {
+          fs.writeFile(file, JSON.stringify(json2), err => {
             if (err) {
               reject(err);
             } else {
