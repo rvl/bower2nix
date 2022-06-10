@@ -24,15 +24,15 @@
     "bower-json": "0.8.4",
     "bower-logger": "0.2.1",
     "fs-extra": "~0.26.5",
-    "lodash": "~4.2.1",
+    "glob": "6.0.4",
+    "lodash": "^4.17.21",
     "promised-temp": "^0.1.0",
     "semver": ">=5.1.0 <6",
-    "temp": "0.8.3",
-    "glob": "6.0.4"
+    "temp": "0.8.3"
   },
   "devDependencies": {
-    "typescript": "~1.8.9",
-    "tsd": "~0.6.5"
+    "tsd": "^0.20.0",
+    "typescript": "~1.8.9"
   },
   "repository": {
     "type": "git",
