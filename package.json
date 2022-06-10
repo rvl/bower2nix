@@ -1,6 +1,6 @@
 {
   "name": "bower2nix",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "Generate nix expressions to fetch bower dependencies",
   "homepage": "https://github.com/rvl/bower2nix",
   "contributors": [
@@ -31,8 +31,7 @@
     "temp": "0.8.3"
   },
   "devDependencies": {
-    "tsd": "^0.20.0",
-    "typescript": "~1.8.9"
+    "typescript": "^4.7.3"
   },
   "repository": {
     "type": "git",
@@ -40,8 +39,7 @@
   },
   "license": "GPL-3.0",
   "scripts": {
-    "postinstall": "echo tsd install",
-    "prepublish": "tsc"
+    "prepare": "tsc"
   },
   "typescript": {
     "definition": "dist/bower2nix.d.ts"

@@ -386,7 +386,7 @@ let
   args = {
     name = "bower2nix";
     packageName = "bower2nix";
-    version = "3.3.0";
+    version = "3.3.1";
     src = ./.;
     dependencies = [
       sources."argparse-1.0.4"
