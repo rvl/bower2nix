@@ -1,4 +1,3 @@
-#!/usr/bin/env nix-shell
-#! nix-shell -i bash -p nodePackages.node2nix
+#!/usr/bin/env bash
 
-node2nix --lock package-lock.json --supplement-input supplement.json --nodejs-14
+$(nix-build node2nix.nix)/bin/node2nix --lock package-lock.json --supplement-input supplement.json --nodejs-14
