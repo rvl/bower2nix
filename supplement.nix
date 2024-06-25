@@ -9,10 +9,10 @@ in
   typescript = nodeEnv.buildNodePackage {
     name = "typescript";
     packageName = "typescript";
-    version = "4.9.3";
+    version = "5.5.2";
     src = fetchurl {
-      url = "https://registry.npmjs.org/typescript/-/typescript-4.9.3.tgz";
-      sha512 = "CIfGzTelbKNEnLpLdGFgdyKhG23CKdKgQPOBc+OUNrkJ2vr+KSzsSV5kq5iWhEQbok+quxgGzrAtGWCyU7tHnA==";
+      url = "https://registry.npmjs.org/typescript/-/typescript-5.5.2.tgz";
+      sha512 = "NcRtPEOsPFFWjobJEtfihkLCZCXZt/os3zf8nTxjVH3RvTSxjrCamJpbExGvYOF+tFHc3pA65qpdwPbzjohhew==";
     };
     buildInputs = globalBuildInputs;
     meta = {

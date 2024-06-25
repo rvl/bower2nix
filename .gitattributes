@@ -1,0 +1,6 @@
+package-lock.json linguist-generated=true
+flake.lock linguist-generated=true
+default.nix linguist-generated=true
+node-env.nix linguist-generated=true
+node-packages.nix linguist-generated=true
+supplement.nix linguist-generated=true
